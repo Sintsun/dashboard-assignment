@@ -1,7 +1,9 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export function WidgetShell({ id, title, hint, span, children }) {
+  const { t } = useLanguage();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id,
   });
@@ -26,11 +28,11 @@ export function WidgetShell({ id, title, hint, span, children }) {
         <button
           type="button"
           className="cursor-grab rounded border border-rule px-2 py-1 text-[11px] font-medium tracking-wide text-muted uppercase active:cursor-grabbing"
-          aria-label={`Drag ${title}`}
+          aria-label={t('widgets.dragAria', { title })}
           {...attributes}
           {...listeners}
         >
-          Drag
+          {t('widgets.drag')}
         </button>
       </header>
       <div className="p-4">{children}</div>

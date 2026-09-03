@@ -1,39 +1,41 @@
+import { useLanguage } from '../i18n/LanguageContext';
 import { summarise } from '../utils/tickets';
 
 export function KpiStrip({ tickets, filters, onToggle }) {
+  const { t } = useLanguage();
   const stats = summarise(tickets);
 
   const cards = [
     {
       key: 'status',
       value: 'Open',
-      label: 'Open',
+      label: t('kpi.open.label'),
       count: stats.open,
-      note: 'Still in the queue',
+      note: t('kpi.open.note'),
       active: filters.status === 'Open',
     },
     {
       key: 'status',
       value: 'In Progress',
-      label: 'In progress',
+      label: t('kpi.inProgress.label'),
       count: stats.inProgress,
-      note: 'Assigned and underway',
+      note: t('kpi.inProgress.note'),
       active: filters.status === 'In Progress',
     },
     {
       key: 'priority',
       value: 'High',
-      label: 'High · active',
+      label: t('kpi.high.label'),
       count: stats.highActive,
-      note: 'Not yet closed',
+      note: t('kpi.high.note'),
       active: filters.priority === 'High',
     },
     {
       key: 'unassignedOnly',
       value: true,
-      label: 'Unassigned',
+      label: t('kpi.unassigned.label'),
       count: stats.unassignedOpen,
-      note: 'Open with no technician',
+      note: t('kpi.unassigned.note'),
       active: filters.unassignedOnly,
     },
   ];
@@ -44,6 +46,7 @@ export function KpiStrip({ tickets, filters, onToggle }) {
         <button
           key={card.label}
           type="button"
+          aria-pressed={card.active}
           onClick={() => onToggle(card.key, card.value)}
           className={`rounded-lg border px-4 py-3 text-left transition ${
             card.active

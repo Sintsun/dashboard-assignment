@@ -1,30 +1,10 @@
 import { useEffect, useState } from 'react';
 
 export const WIDGET_CATALOG = [
-  {
-    id: 'attention',
-    title: 'Needs attention',
-    hint: 'High priority or unassigned open jobs',
-    span: 1,
-  },
-  {
-    id: 'categories',
-    title: 'Work by trade',
-    hint: 'Where the queue is concentrating',
-    span: 1,
-  },
-  {
-    id: 'tickets',
-    title: 'Ticket queue',
-    hint: 'Sorted for dispatch: high and open first',
-    span: 2,
-  },
-  {
-    id: 'recent',
-    title: 'Recently raised',
-    hint: 'Newest tickets on the estate',
-    span: 2,
-  },
+  { id: 'attention', span: 1 },
+  { id: 'categories', span: 1 },
+  { id: 'tickets', span: 2 },
+  { id: 'recent', span: 2 },
 ];
 
 const STORAGE_KEY = 'harbourview-dashboard-layout';

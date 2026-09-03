@@ -11,6 +11,7 @@ import {
   rectSortingStrategy,
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
+import { useLanguage } from '../i18n/LanguageContext';
 import { WidgetShell } from './WidgetShell';
 import { AttentionWidget } from './widgets/AttentionWidget';
 import { CategoryWidget } from './widgets/CategoryWidget';
@@ -24,7 +25,8 @@ const widgetMap = {
   recent: RecentWidget,
 };
 
-export function WidgetGrid({ widgets, tickets, onReorder }) {
+export function WidgetGrid({ widgets, tickets, allTickets, filters, onToggle, onReorder }) {
+  const { t } = useLanguage();
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 6 },
@@ -43,7 +45,7 @@ export function WidgetGrid({ widgets, tickets, onReorder }) {
   if (widgets.length === 0) {
     return (
       <p className="rounded-lg border border-dashed border-rule bg-card px-4 py-10 text-center text-sm text-muted">
-        All widgets are hidden. Use Customise board to bring them back.
+        {t('widgets.allHidden')}
       </p>
     );
   }
@@ -54,15 +56,24 @@ export function WidgetGrid({ widgets, tickets, onReorder }) {
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           {widgets.map((widget) => {
             const Body = widgetMap[widget.id];
+            const bodyProps =
+              widget.id === 'categories'
+                ? {
+                    tickets: allTickets,
+                    selectedCategory: filters.category,
+                    onToggleCategory: (category) => onToggle('category', category),
+                  }
+                : { tickets };
+
             return (
               <WidgetShell
                 key={widget.id}
                 id={widget.id}
-                title={widget.title}
-                hint={widget.hint}
+                title={t(`widgets.${widget.id}.title`)}
+                hint={t(`widgets.${widget.id}.hint`)}
                 span={widget.span}
               >
-                <Body tickets={tickets} />
+                <Body {...bodyProps} />
               </WidgetShell>
             );
           })}
