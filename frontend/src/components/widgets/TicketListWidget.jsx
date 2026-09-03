@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { daysOpen, formatDate, isStaleTicket } from '../../utils/dates';
 import { PriorityBadge } from '../PriorityBadge';
@@ -5,6 +6,12 @@ import { StatusBadge } from '../StatusBadge';
 
 export function TicketListWidget({ tickets }) {
   const { lang, t } = useLanguage();
+  const [ageFirst, setAgeFirst] = useState(false);
+
+  const rows = useMemo(() => {
+    if (!ageFirst) return tickets;
+    return [...tickets].sort((a, b) => daysOpen(b.created) - daysOpen(a.created));
+  }, [tickets, ageFirst]);
 
   if (tickets.length === 0) {
     return <p className="text-sm text-muted">{t('empty.tickets')}</p>;
@@ -22,11 +29,26 @@ export function TicketListWidget({ tickets }) {
             <th className="pb-2 font-medium">{t('table.status')}</th>
             <th className="pb-2 font-medium">{t('table.assigned')}</th>
             <th className="pb-2 font-medium">{t('table.raised')}</th>
-            <th className="pb-2 font-medium">{t('table.age')}</th>
+            <th className="pb-2 font-medium">
+              <button
+                type="button"
+                onClick={() => setAgeFirst((current) => !current)}
+                aria-pressed={ageFirst}
+                title={ageFirst ? t('age.sortActive') : t('age.sort')}
+                className={`inline-flex cursor-pointer items-center gap-1 hover:text-ink ${
+                  ageFirst ? 'font-semibold text-ink' : 'font-medium'
+                }`}
+              >
+                <span className="uppercase tracking-wide">{t('table.age')}</span>
+                <span className="text-[10px] font-medium tracking-normal normal-case text-muted">
+                  {ageFirst ? t('age.oldest') : '↕'}
+                </span>
+              </button>
+            </th>
           </tr>
         </thead>
         <tbody>
-          {tickets.map((ticket) => {
+          {rows.map((ticket) => {
             const stale = isStaleTicket(ticket);
             return (
               <tr

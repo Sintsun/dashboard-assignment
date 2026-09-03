@@ -28,7 +28,7 @@ export function KpiStrip({ tickets, filters, onToggle }) {
       label: t('kpi.high.label'),
       count: stats.highActive,
       note: t('kpi.high.note'),
-      active: filters.priority === 'High',
+      active: filters.priority === 'High' && !filters.status,
     },
     {
       key: 'unassignedOnly',

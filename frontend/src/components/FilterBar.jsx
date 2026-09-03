@@ -8,6 +8,7 @@ export function FilterBar({ filters, options, onChange, onClear, resultCount, to
     filters.priority ||
     filters.unassignedOnly ||
     filters.search;
+  const highActiveOnly = filters.priority === 'High' && !filters.status;
 
   return (
     <section className="rounded-lg border border-rule bg-card p-3">
@@ -74,6 +75,10 @@ export function FilterBar({ filters, options, onChange, onClear, resultCount, to
           </button>
         </div>
       </div>
+
+      {highActiveOnly && (
+        <p className="mt-2 text-xs text-muted">{t('filter.highActiveHint')}</p>
+      )}
     </section>
   );
 }

@@ -49,6 +49,13 @@ export function useTickets() {
         if (filters.status && ticket.status !== filters.status) return false;
         if (filters.category && ticket.category !== filters.category) return false;
         if (filters.priority && ticket.priority !== filters.priority) return false;
+        if (
+          filters.priority === 'High' &&
+          !filters.status &&
+          ticket.status === 'Closed'
+        ) {
+          return false;
+        }
         if (filters.unassignedOnly && ticket.assignedTo) return false;
         if (query) {
           const haystack = `${ticket.title} ${ticket.location} ${ticket.assignedTo ?? ''}`.toLowerCase();
@@ -67,6 +74,15 @@ export function useTickets() {
     setFilters((current) => {
       if (key === 'unassignedOnly') {
         return { ...current, unassignedOnly: !current.unassignedOnly };
+      }
+      // High KPI is "not yet closed". Clear status so Closed highs do not sneak in.
+      if (key === 'priority' && value === 'High') {
+        const turningOn = current.priority !== 'High' || current.status;
+        return {
+          ...current,
+          priority: turningOn ? 'High' : '',
+          status: '',
+        };
       }
       return { ...current, [key]: current[key] === value ? '' : value };
     });

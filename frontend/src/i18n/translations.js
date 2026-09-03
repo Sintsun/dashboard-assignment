@@ -29,6 +29,7 @@ export const translations = {
       all: 'All',
       unassignedOnly: 'Unassigned only',
       clear: 'Clear',
+      highActiveHint: 'High · active hides closed tickets',
     },
     layout: {
       customise: 'Customise board',
@@ -46,7 +47,7 @@ export const translations = {
       },
       tickets: {
         title: 'Ticket queue',
-        hint: 'Sorted for dispatch: high and open first',
+        hint: 'Dispatch order by default — click Age for longest waiting',
       },
       recent: {
         title: 'Recently raised',
@@ -75,6 +76,9 @@ export const translations = {
     age: {
       days: '{n}d',
       stale: 'Open for more than 30 days',
+      sort: 'Show longest-waiting first',
+      sortActive: 'Back to dispatch order',
+      oldest: 'oldest',
     },
     status: {
       Open: 'Open',
@@ -126,6 +130,7 @@ export const translations = {
       all: '全部',
       unassignedOnly: '只看未派工',
       clear: '清除',
+      highActiveHint: '「高優先 · 未關」不含已完成',
     },
     layout: {
       customise: '自訂看板',
@@ -143,7 +148,7 @@ export const translations = {
       },
       tickets: {
         title: '工單隊列',
-        hint: '依調度順序：高優先、待處理在前',
+        hint: '預設依調度排序，點「已開」可改看掛最久的單',
       },
       recent: {
         title: '最近開單',
@@ -172,6 +177,9 @@ export const translations = {
     age: {
       days: '{n}天',
       stale: '已開超過 30 天',
+      sort: '改為最舊優先',
+      sortActive: '回到調度排序',
+      oldest: '最舊',
     },
     status: {
       Open: '待處理',
