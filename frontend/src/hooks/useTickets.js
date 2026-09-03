@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CATEGORIES, PRIORITIES, STATUSES } from '../constants/tickets';
+import { matchesFilters } from '../utils/filters';
 import { compareForDispatch } from '../utils/tickets';
 
 const emptyFilters = {
@@ -41,30 +42,10 @@ export function useTickets() {
     return () => controller.abort();
   }, []);
 
-  const filtered = useMemo(() => {
-    const query = filters.search.trim().toLowerCase();
-
-    return tickets
-      .filter((ticket) => {
-        if (filters.status && ticket.status !== filters.status) return false;
-        if (filters.category && ticket.category !== filters.category) return false;
-        if (filters.priority && ticket.priority !== filters.priority) return false;
-        if (
-          filters.priority === 'High' &&
-          !filters.status &&
-          ticket.status === 'Closed'
-        ) {
-          return false;
-        }
-        if (filters.unassignedOnly && ticket.assignedTo) return false;
-        if (query) {
-          const haystack = `${ticket.title} ${ticket.location} ${ticket.assignedTo ?? ''}`.toLowerCase();
-          if (!haystack.includes(query)) return false;
-        }
-        return true;
-      })
-      .sort(compareForDispatch);
-  }, [tickets, filters]);
+  const filtered = useMemo(
+    () => tickets.filter((ticket) => matchesFilters(ticket, filters)).sort(compareForDispatch),
+    [tickets, filters],
+  );
 
   const updateFilter = (key, value) => {
     setFilters((current) => ({ ...current, [key]: value }));
@@ -75,20 +56,13 @@ export function useTickets() {
       if (key === 'unassignedOnly') {
         return { ...current, unassignedOnly: !current.unassignedOnly };
       }
-      // High KPI is "not yet closed". Clear status so Closed highs do not sneak in.
       if (key === 'priority' && value === 'High') {
         const turningOn = current.priority !== 'High' || current.status;
-        return {
-          ...current,
-          priority: turningOn ? 'High' : '',
-          status: '',
-        };
+        return { ...current, priority: turningOn ? 'High' : '', status: '' };
       }
       return { ...current, [key]: current[key] === value ? '' : value };
     });
   };
-
-  const clearFilters = () => setFilters(emptyFilters);
 
   return {
     tickets,
@@ -96,13 +70,9 @@ export function useTickets() {
     filters,
     updateFilter,
     toggleFilter,
-    clearFilters,
+    clearFilters: () => setFilters(emptyFilters),
     loading,
     error,
-    options: {
-      statuses: STATUSES,
-      categories: CATEGORIES,
-      priorities: PRIORITIES,
-    },
+    options: { statuses: STATUSES, categories: CATEGORIES, priorities: PRIORITIES },
   };
 }

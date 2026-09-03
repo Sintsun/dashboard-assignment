@@ -12,6 +12,7 @@ import {
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
 import { useLanguage } from '../i18n/LanguageContext';
+import { EmptyState } from './EmptyState';
 import { WidgetShell } from './WidgetShell';
 import { AttentionWidget } from './widgets/AttentionWidget';
 import { CategoryWidget } from './widgets/CategoryWidget';
@@ -43,11 +44,7 @@ export function WidgetGrid({ widgets, tickets, allTickets, filters, onToggle, on
   };
 
   if (widgets.length === 0) {
-    return (
-      <p className="rounded-lg border border-dashed border-rule bg-card px-4 py-10 text-center text-sm text-muted">
-        {t('widgets.allHidden')}
-      </p>
-    );
+    return <EmptyState dashed>{t('widgets.allHidden')}</EmptyState>;
   }
 
   return (

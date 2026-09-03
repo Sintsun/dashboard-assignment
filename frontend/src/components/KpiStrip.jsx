@@ -1,5 +1,7 @@
 import { useLanguage } from '../i18n/LanguageContext';
+import { isHighActiveOnly } from '../utils/filters';
 import { summarise } from '../utils/tickets';
+import { KpiCard } from './KpiCard';
 
 export function KpiStrip({ tickets, filters, onToggle }) {
   const { t } = useLanguage();
@@ -28,7 +30,7 @@ export function KpiStrip({ tickets, filters, onToggle }) {
       label: t('kpi.high.label'),
       count: stats.highActive,
       note: t('kpi.high.note'),
-      active: filters.priority === 'High' && !filters.status,
+      active: isHighActiveOnly(filters),
     },
     {
       key: 'unassignedOnly',
@@ -43,25 +45,14 @@ export function KpiStrip({ tickets, filters, onToggle }) {
   return (
     <section className="grid grid-cols-2 gap-2 lg:grid-cols-4">
       {cards.map((card) => (
-        <button
+        <KpiCard
           key={card.label}
-          type="button"
-          aria-pressed={card.active}
+          label={card.label}
+          count={card.count}
+          note={card.note}
+          active={card.active}
           onClick={() => onToggle(card.key, card.value)}
-          className={`rounded-lg border px-4 py-3 text-left transition ${
-            card.active
-              ? 'border-ink bg-ink text-paper'
-              : 'border-rule bg-card hover:border-stone-400'
-          }`}
-        >
-          <p className={`text-xs font-medium ${card.active ? 'text-stone-300' : 'text-muted'}`}>
-            {card.label}
-          </p>
-          <p className="mt-1 text-3xl font-semibold tracking-tight">{card.count}</p>
-          <p className={`mt-1 text-xs ${card.active ? 'text-stone-300' : 'text-muted'}`}>
-            {card.note}
-          </p>
-        </button>
+        />
       ))}
     </section>
   );

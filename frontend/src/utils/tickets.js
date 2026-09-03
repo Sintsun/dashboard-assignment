@@ -1,9 +1,5 @@
 import { PRIORITY_RANK, STATUS_RANK } from '../constants/tickets';
 
-export function uniqueValues(tickets, key) {
-  return [...new Set(tickets.map((ticket) => ticket[key]))];
-}
-
 export function compareForDispatch(a, b) {
   const byPriority = PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority];
   if (byPriority !== 0) return byPriority;
@@ -14,10 +10,12 @@ export function compareForDispatch(a, b) {
   return b.created.localeCompare(a.created);
 }
 
+export function isActiveHigh(ticket) {
+  return ticket.priority === 'High' && ticket.status !== 'Closed';
+}
+
 export function needsAttention(ticket) {
-  const highAndOpen = ticket.priority === 'High' && ticket.status !== 'Closed';
-  const unassignedOpen = ticket.status === 'Open' && !ticket.assignedTo;
-  return highAndOpen || unassignedOpen;
+  return isActiveHigh(ticket) || (ticket.status === 'Open' && !ticket.assignedTo);
 }
 
 export function countBy(tickets, key) {
@@ -32,9 +30,7 @@ export function summarise(tickets) {
   return {
     open: tickets.filter((ticket) => ticket.status === 'Open').length,
     inProgress: tickets.filter((ticket) => ticket.status === 'In Progress').length,
-    highActive: tickets.filter(
-      (ticket) => ticket.priority === 'High' && ticket.status !== 'Closed',
-    ).length,
+    highActive: tickets.filter(isActiveHigh).length,
     unassignedOpen: tickets.filter(
       (ticket) => ticket.status === 'Open' && !ticket.assignedTo,
     ).length,

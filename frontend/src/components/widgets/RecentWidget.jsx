@@ -1,7 +1,7 @@
 import { useLanguage } from '../../i18n/LanguageContext';
 import { formatDate } from '../../utils/dates';
-import { PriorityBadge } from '../PriorityBadge';
-import { StatusBadge } from '../StatusBadge';
+import { EmptyState } from '../EmptyState';
+import { TicketBadges } from '../TicketBadges';
 
 export function RecentWidget({ tickets }) {
   const { lang, t } = useLanguage();
@@ -10,7 +10,7 @@ export function RecentWidget({ tickets }) {
     .slice(0, 6);
 
   if (items.length === 0) {
-    return <p className="text-sm text-muted">{t('empty.recent')}</p>;
+    return <EmptyState>{t('empty.recent')}</EmptyState>;
   }
 
   return (
@@ -23,8 +23,7 @@ export function RecentWidget({ tickets }) {
           <p className="mt-1 text-sm font-medium">{ticket.title}</p>
           <p className="text-xs text-muted">{ticket.location}</p>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            <PriorityBadge priority={ticket.priority} />
-            <StatusBadge status={ticket.status} />
+            <TicketBadges ticket={ticket} />
           </div>
         </li>
       ))}

@@ -1,4 +1,6 @@
 import { useLanguage } from '../i18n/LanguageContext';
+import { isHighActiveOnly } from '../utils/filters';
+import { FIELD_CLASS, SelectField } from './SelectField';
 
 export function FilterBar({ filters, options, onChange, onClear, resultCount, totalCount }) {
   const { t } = useLanguage();
@@ -8,7 +10,12 @@ export function FilterBar({ filters, options, onChange, onClear, resultCount, to
     filters.priority ||
     filters.unassignedOnly ||
     filters.search;
-  const highActiveOnly = filters.priority === 'High' && !filters.status;
+
+  const selects = [
+    { key: 'status', options: options.statuses, prefix: 'status' },
+    { key: 'category', options: options.categories, prefix: 'category' },
+    { key: 'priority', options: options.priorities, prefix: 'priority' },
+  ];
 
   return (
     <section className="rounded-lg border border-rule bg-card p-3">
@@ -27,34 +34,21 @@ export function FilterBar({ filters, options, onChange, onClear, resultCount, to
             value={filters.search}
             onChange={(event) => onChange('search', event.target.value)}
             placeholder={t('filter.searchPlaceholder')}
-            className="h-9 rounded border border-rule bg-paper px-2.5 text-sm text-ink outline-none focus:border-ink"
+            className={FIELD_CLASS}
           />
         </label>
 
-        <SelectField
-          label={t('filter.status')}
-          value={filters.status}
-          onChange={(value) => onChange('status', value)}
-          options={options.statuses}
-          allLabel={t('filter.all')}
-          getLabel={(value) => t(`status.${value}`)}
-        />
-        <SelectField
-          label={t('filter.category')}
-          value={filters.category}
-          onChange={(value) => onChange('category', value)}
-          options={options.categories}
-          allLabel={t('filter.all')}
-          getLabel={(value) => t(`category.${value}`)}
-        />
-        <SelectField
-          label={t('filter.priority')}
-          value={filters.priority}
-          onChange={(value) => onChange('priority', value)}
-          options={options.priorities}
-          allLabel={t('filter.all')}
-          getLabel={(value) => t(`priority.${value}`)}
-        />
+        {selects.map((field) => (
+          <SelectField
+            key={field.key}
+            label={t(`filter.${field.key}`)}
+            value={filters[field.key]}
+            onChange={(value) => onChange(field.key, value)}
+            options={field.options}
+            allLabel={t('filter.all')}
+            getLabel={(value) => t(`${field.prefix}.${value}`)}
+          />
+        ))}
 
         <div className="flex items-end gap-2">
           <label className="flex h-9 flex-1 items-center gap-2 rounded border border-rule bg-paper px-2.5 text-sm">
@@ -76,29 +70,9 @@ export function FilterBar({ filters, options, onChange, onClear, resultCount, to
         </div>
       </div>
 
-      {highActiveOnly && (
+      {isHighActiveOnly(filters) && (
         <p className="mt-2 text-xs text-muted">{t('filter.highActiveHint')}</p>
       )}
     </section>
-  );
-}
-
-function SelectField({ label, value, onChange, options, allLabel, getLabel }) {
-  return (
-    <label className="flex flex-col gap-1 text-xs font-medium text-muted">
-      {label}
-      <select
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="h-9 rounded border border-rule bg-paper px-2 text-sm text-ink outline-none focus:border-ink"
-      >
-        <option value="">{allLabel}</option>
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {getLabel(option)}
-          </option>
-        ))}
-      </select>
-    </label>
   );
 }

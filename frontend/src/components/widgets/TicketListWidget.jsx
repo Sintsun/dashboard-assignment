@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { daysOpen, formatDate, isStaleTicket } from '../../utils/dates';
+import { daysOpen, formatDate } from '../../utils/dates';
+import { isActiveHigh } from '../../utils/tickets';
+import { AgeLabel, AssigneeLabel } from '../AgeLabel';
+import { EmptyState } from '../EmptyState';
 import { PriorityBadge } from '../PriorityBadge';
 import { StatusBadge } from '../StatusBadge';
 
@@ -14,7 +17,7 @@ export function TicketListWidget({ tickets }) {
   }, [tickets, ageFirst]);
 
   if (tickets.length === 0) {
-    return <p className="text-sm text-muted">{t('empty.tickets')}</p>;
+    return <EmptyState>{t('empty.tickets')}</EmptyState>;
   }
 
   return (
@@ -48,37 +51,33 @@ export function TicketListWidget({ tickets }) {
           </tr>
         </thead>
         <tbody>
-          {rows.map((ticket) => {
-            const stale = isStaleTicket(ticket);
-            return (
-              <tr
-                key={ticket.id}
-                className={`border-b border-rule last:border-0 ${
-                  ticket.priority === 'High' && ticket.status !== 'Closed' ? 'bg-rose-50/70' : ''
-                }`}
-              >
-                <td className="py-2 pr-3">
-                  <PriorityBadge priority={ticket.priority} />
-                </td>
-                <td className="py-2 pr-3 font-medium">{ticket.title}</td>
-                <td className="py-2 pr-3 text-muted">{ticket.location}</td>
-                <td className="py-2 pr-3">{t(`category.${ticket.category}`)}</td>
-                <td className="py-2 pr-3">
-                  <StatusBadge status={ticket.status} />
-                </td>
-                <td className="py-2 pr-3 text-muted">{ticket.assignedTo ?? t('unassigned')}</td>
-                <td className="py-2 whitespace-nowrap text-muted">{formatDate(ticket.created, lang)}</td>
-                <td className="py-2 pr-1">
-                  <span
-                    title={stale ? t('age.stale') : undefined}
-                    className={`tabular-nums ${stale ? 'font-semibold text-rose-800' : 'text-muted'}`}
-                  >
-                    {t('age.days', { n: daysOpen(ticket.created) })}
-                  </span>
-                </td>
-              </tr>
-            );
-          })}
+          {rows.map((ticket) => (
+            <tr
+              key={ticket.id}
+              className={`border-b border-rule last:border-0 ${
+                isActiveHigh(ticket) ? 'bg-rose-50/70' : ''
+              }`}
+            >
+              <td className="py-2 pr-3">
+                <PriorityBadge priority={ticket.priority} />
+              </td>
+              <td className="py-2 pr-3 font-medium">{ticket.title}</td>
+              <td className="py-2 pr-3 text-muted">{ticket.location}</td>
+              <td className="py-2 pr-3">{t(`category.${ticket.category}`)}</td>
+              <td className="py-2 pr-3">
+                <StatusBadge status={ticket.status} />
+              </td>
+              <td className="py-2 pr-3 text-muted">
+                <AssigneeLabel ticket={ticket} />
+              </td>
+              <td className="py-2 whitespace-nowrap text-muted">
+                {formatDate(ticket.created, lang)}
+              </td>
+              <td className="py-2 pr-1">
+                <AgeLabel ticket={ticket} />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
