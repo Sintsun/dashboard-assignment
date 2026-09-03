@@ -3,10 +3,9 @@ export const translations = {
     documentTitle: 'Harbourview · Maintenance',
     estate: 'Harbourview Residences',
     heading: 'Maintenance board',
-    intro:
-      'Built for the duty manager and shift coordinator: see what is still open, what is high priority, and who has not been assigned — then reshape the board for the shift.',
     loading: 'Loading tickets…',
-    error: 'Could not load tickets from the API. Start the API on port 3001, then refresh.',
+    error: 'Could not load tickets from the API. Start the API on port 3001, then try again.',
+    retry: 'Try again',
     language: {
       en: 'EN',
       zh: '中文',
@@ -104,10 +103,9 @@ export const translations = {
     documentTitle: 'Harbourview · 維修看板',
     estate: 'Harbourview Residences',
     heading: '維修看板',
-    intro:
-      '給值班經理與調度員用：一眼看到還有多少未完成、哪些是高優先、哪些還沒派人，再依這班需要重排看板。',
     loading: '正在載入工單…',
-    error: '無法從 API 載入工單。請先啟動 port 3001 的後端，再重新整理。',
+    error: '無法從 API 載入工單。請先啟動 port 3001 的後端，再按「再試一次」。',
+    retry: '再試一次',
     language: {
       en: 'EN',
       zh: '中文',

@@ -1,3 +1,4 @@
+import { ErrorBanner } from './components/ErrorBanner';
 import { FilterBar } from './components/FilterBar';
 import { KpiStrip } from './components/KpiStrip';
 import { LanguageToggle } from './components/LanguageToggle';
@@ -18,6 +19,7 @@ export default function App() {
     clearFilters,
     loading,
     error,
+    retry,
     options,
   } = useTickets();
   const { layout, visibleWidgets, reorder, toggleWidget, resetLayout } = useDashboardLayout();
@@ -30,7 +32,6 @@ export default function App() {
             {t('estate')}
           </p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight">{t('heading')}</h1>
-          <p className="mt-1 max-w-xl text-sm text-muted">{t('intro')}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <LanguageToggle />
@@ -41,9 +42,12 @@ export default function App() {
       {loading && <p className="text-sm text-muted">{t('loading')}</p>}
 
       {error && (
-        <p className="rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
-          {t('error')}
-        </p>
+        <ErrorBanner
+          message={t('error')}
+          retryLabel={t('retry')}
+          onRetry={retry}
+          retrying={loading}
+        />
       )}
 
       {!loading && !error && (

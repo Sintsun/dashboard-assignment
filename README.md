@@ -26,6 +26,20 @@ cd frontend && npm install && npm run dev
 
 The Vite dev server proxies `/api` to port 3001.
 
+## Screenshots
+
+KPIs, filters, and trade bars — click a card or a trade to reshape the queue:
+
+![Maintenance board — KPIs, filters, and work by trade](docs/board.png)
+
+Ticket queue (Age column, dispatch sort) and recently raised:
+
+![Ticket queue and recently raised](docs/queue.png)
+
+Show, hide, or drag widgets. Layout is saved in this browser:
+
+![Customise board](docs/customise.png)
+
 ## Who uses this, and what they need at a glance
 
 Not a resident logging a fault. Someone standing in the management office.

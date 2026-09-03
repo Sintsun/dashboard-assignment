@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CATEGORIES, PRIORITIES, STATUSES } from '../constants/tickets';
 import { matchesFilters } from '../utils/filters';
 import { compareForDispatch } from '../utils/tickets';
@@ -16,11 +16,13 @@ export function useTickets() {
   const [filters, setFilters] = useState(emptyFilters);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const loadTickets = useCallback((signal) => {
+    setLoading(true);
+    setError(null);
 
-    fetch('/api/tickets', { signal: controller.signal })
+    return fetch('/api/tickets', { signal })
       .then((response) => {
         if (!response.ok) {
           throw new Error('Could not load tickets from the API.');
@@ -36,11 +38,17 @@ export function useTickets() {
         setError(err.message);
       })
       .finally(() => {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!signal.aborted) setLoading(false);
       });
-
-    return () => controller.abort();
   }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    loadTickets(controller.signal);
+    return () => controller.abort();
+  }, [loadTickets, retryCount]);
+
+  const retry = () => setRetryCount((count) => count + 1);
 
   const filtered = useMemo(
     () => tickets.filter((ticket) => matchesFilters(ticket, filters)).sort(compareForDispatch),
@@ -73,6 +81,7 @@ export function useTickets() {
     clearFilters: () => setFilters(emptyFilters),
     loading,
     error,
+    retry,
     options: { statuses: STATUSES, categories: CATEGORIES, priorities: PRIORITIES },
   };
 }
